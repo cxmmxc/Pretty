@@ -1,0 +1,12 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+    </style>
+
+    <style name="style_loadingdialog" parent="AppTheme">
+        <item name="android:indeterminateDrawable">@drawable/progressbar_large</item>
+    </style>
+
+</resources>
