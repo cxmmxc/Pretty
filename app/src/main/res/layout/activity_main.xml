@@ -9,13 +9,14 @@
         android:layout_height="@dimen/title_height"></include>
 
     <RelativeLayout
+        android:id="@+id/pagerLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         
         <RelativeLayout
             android:id="@+id/header_layout"
             android:layout_width="match_parent"
-            android:layout_height="170dip">
+            android:layout_height="190dip">
             <android.support.v4.view.ViewPager
                 android:id="@+id/viewpager_layout"
                 android:layout_width="match_parent"

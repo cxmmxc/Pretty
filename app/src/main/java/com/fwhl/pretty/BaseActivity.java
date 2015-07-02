@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.lidroid.xutils.BitmapUtils;
 import com.lidroid.xutils.ViewUtils;
+import com.lidroid.xutils.util.LogUtils;
 
 /**
  * Created by Terry.Chen on 2015/6/29 16:25.
@@ -19,6 +20,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mContext = this;
+        LogUtils.customTagPrefix = "cxm";
         ViewUtils.inject(this);
         mBitmapUtils = new BitmapUtils(this);
         initView();

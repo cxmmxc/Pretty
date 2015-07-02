@@ -4,9 +4,27 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <com.fwhl.pretty.view.HackyViewPager
-        android:id="@+id/viewpager"
+    <include
+        layout="@layout/title_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        />
+        android:layout_height="@dimen/title_height"></include>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.fwhl.pretty.view.HackyViewPager
+            android:id="@+id/viewpager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+        <ProgressBar
+            android:id="@+id/progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminateDuration="1500"
+            style="@style/style_loadingdialog"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="20dip"
+            android:indeterminate="false" />
+    </RelativeLayout>
 </LinearLayout>

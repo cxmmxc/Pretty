@@ -5,12 +5,14 @@ import android.support.v4.view.PagerAdapter;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.fwhl.pretty.BaseActivity;
 import com.fwhl.pretty.R;
 import com.fwhl.pretty.bean.MainPicBean;
 import com.fwhl.pretty.view.HackyViewPager;
-import com.fwhl.pretty.view.LoadingDialog;
 import com.lidroid.xutils.BitmapUtils;
 import com.lidroid.xutils.view.annotation.ContentView;
 import com.lidroid.xutils.view.annotation.ViewInject;
@@ -36,19 +38,27 @@ public class PicDetailActivity extends BaseActivity {
     @ViewInject(R.id.viewpager)
     HackyViewPager viewpager;
 
+    @ViewInject(R.id.title_text)
+    TextView title_text;
+    @ViewInject(R.id.back_btn)
+    Button back_btn;
+    @ViewInject(R.id.progress)
+    ProgressBar progress;
+
     private ArrayList<MainPicBean> mMainPics;
 
     private ViewPagerAdapter mAdapter;
     
     @Override
     protected void initView() {
-
+        back_btn.setVisibility(View.VISIBLE);
     }
 
     @Override
     protected void initData() {
         mPicBean = (MainPicBean) getIntent().getSerializableExtra("bean");
-        this.setTitle(mPicBean.getTitle());
+        title_text.setText(mPicBean.getTitle());
+
         //通过url进行解析
         mNowHerfUrl = mPicBean.getHrefUrl();
 
@@ -65,7 +75,6 @@ public class PicDetailActivity extends BaseActivity {
 
     class JsoupTask extends AsyncTask<String, Integer, Object> {
 
-        final LoadingDialog dialog = new LoadingDialog(PicDetailActivity.this);
 
         /**
          * Runs on the UI thread before {@link #doInBackground}.
@@ -76,7 +85,6 @@ public class PicDetailActivity extends BaseActivity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            dialog.show();
         }
 
         /**
@@ -93,7 +101,7 @@ public class PicDetailActivity extends BaseActivity {
         @Override
         protected void onPostExecute(Object o) {
             super.onPostExecute(o);
-            dialog.dismiss();
+            progress.setVisibility(View.GONE);
             if (mMainPics.isEmpty())
                 return;
             Log.e("cxm",mMainPics.toString());
@@ -121,27 +129,21 @@ public class PicDetailActivity extends BaseActivity {
                 
                 
                 Document document = Jsoup.connect(url).get();
-                Element first = document.select("strong.diblcok").first();
-                String[] strings = first.toString().split("/");
-                String str = strings[strings.length - 2];
-                str = str.substring(0, str.length() - 1);
-                Element element = document.select("div#imgString").first();
-                String attr = element.child(0).attr("src");
-                MainPicBean picBean_1 = new MainPicBean();
-                picBean_1.setPicUrl(JpgToChange(attr));
-                mMainPics.add(picBean_1);
+                Element select = document.select("meta[content]").last();
+                String string = select.attr("content");
+                int fir_index = string.indexOf("[");
+                int sec_index = string.indexOf("]");
+                int size = Integer.parseInt(string.substring(fir_index + 2, sec_index - 3));
 
-                int html_size = Integer.parseInt(str);
-                Log.e("cxm",html_size+""+","+url);
-                for (int i = 2; i <= html_size; i++) {
-                    MainPicBean picBean_child = new MainPicBean();
-                    String child_url = url.replace(".html", "") + "-" + i + ".html";
-                    Log.e("cxm",child_url);
-                    Document document_child = Jsoup.connect(child_url).get();
-                    Element element_child = document_child.select("div#imgString").first();
-                    String attr_child = element_child.child(0).attr("src");
-                    picBean_child.setPicUrl(JpgToChange(attr_child));
-                    mMainPics.add(picBean_child);
+                Element element = document.select("div.pp").first();
+                Element src_fir = element.getElementsByAttribute("src").last();
+                String img_url_one = src_fir.attr("src");
+                String[] img_str_split = img_url_one.split("-");
+                String img_url_base = img_str_split[0];
+                for(int i=1; i<=size; i++) {
+                    MainPicBean bean = new MainPicBean();
+                    bean.setPicUrl(img_url_base+"-"+i+".jpg");
+                    mMainPics.add(bean);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -149,24 +151,15 @@ public class PicDetailActivity extends BaseActivity {
             return null;
         }
     }
-    
-    private String JpgToChange(String jpgUrl) {
-
-        String url_title = "http://mnsfz-img.xiuna.com";
-        String[] split_1 = jpgUrl.split("/");
-        StringBuilder sb_1 = new StringBuilder();
-        for(int i=0; i<split_1.length; i++) {
-            if(i>2) {
-                sb_1.append("/"+split_1[i]);
-            }
-        }
-
-       return url_title+sb_1.toString();
-    }
 
     @Override
     protected void setListener() {
-
+        back_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
     }
 
     class ViewPagerAdapter extends PagerAdapter {
