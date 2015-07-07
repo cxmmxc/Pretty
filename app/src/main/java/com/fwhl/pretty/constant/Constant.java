@@ -9,4 +9,7 @@ public class Constant {
     public final static String SHAREPREFENCE_NAME = "sp_text";
     public final static String JSOUP_URL = "http://www.mnsfz.com/";
     public final static String JSOUP_SIMEI_URL = "http://www.simei8.com/";
+
+    public final static String HOME_FRAGMENT = "home_fragment";
+    public final static String CATEGORY_FRAGMENT = "category_fragment";
 }

@@ -2,12 +2,11 @@ package com.fwhl.pretty.ui;
 
 import android.os.AsyncTask;
 import android.support.v4.view.PagerAdapter;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import com.fwhl.pretty.BaseActivity;
 import com.fwhl.pretty.R;
@@ -38,26 +37,23 @@ public class PicDetailActivity extends BaseActivity {
     @ViewInject(R.id.viewpager)
     HackyViewPager viewpager;
 
-    @ViewInject(R.id.title_text)
-    TextView title_text;
-    @ViewInject(R.id.back_btn)
-    Button back_btn;
     @ViewInject(R.id.progress)
     ProgressBar progress;
-
+    @ViewInject(R.id.toolbar)
+    Toolbar toolbar;
+    
     private ArrayList<MainPicBean> mMainPics;
+    
 
     private ViewPagerAdapter mAdapter;
     
     @Override
     protected void initView() {
-        back_btn.setVisibility(View.VISIBLE);
     }
 
     @Override
     protected void initData() {
         mPicBean = (MainPicBean) getIntent().getSerializableExtra("bean");
-        title_text.setText(mPicBean.getTitle());
 
         //通过url进行解析
         mNowHerfUrl = mPicBean.getHrefUrl();
@@ -154,12 +150,11 @@ public class PicDetailActivity extends BaseActivity {
 
     @Override
     protected void setListener() {
-        back_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+    }
+
+    @Override
+    protected void initToolbar() {
+        super.initToolbar(toolbar);
     }
 
     class ViewPagerAdapter extends PagerAdapter {

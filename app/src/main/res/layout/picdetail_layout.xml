@@ -4,10 +4,8 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <include
-        layout="@layout/title_layout"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/title_height"></include>
+
+    <include layout="@layout/toolbar_layout" />
 
     <RelativeLayout
         android:layout_width="match_parent"

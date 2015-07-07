@@ -8,6 +8,7 @@ import com.fwhl.pretty.BaseActivity;
  * Email:cxm_lmz@163.com
  */
 public class WelcomeActivity extends BaseActivity {
+    
     @Override
     protected void initView() {
         
@@ -21,5 +22,10 @@ public class WelcomeActivity extends BaseActivity {
     @Override
     protected void setListener() {
 
+    }
+
+    @Override
+    protected void initToolbar() {
+        
     }
 }

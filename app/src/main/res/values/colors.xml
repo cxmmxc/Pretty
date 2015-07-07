@@ -2,5 +2,12 @@
 <resources>
     <color name="title_bg">#E61A5F</color>
     <color name="dot_uncheck_color">#aaaaaa</color>
-    
+
+
+    <color name="text_color_primary">#212121</color>
+    <color name="text_second_color_primary">#727272</color>
+
+    <color name="drawer_scrim_color">#88EEEEEE</color>
+    <color name="action_bar_title_color">@android:color/white</color>
+    <color name="window_background">@android:color/white</color>
 </resources>
