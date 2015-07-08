@@ -10,4 +10,5 @@
     <color name="drawer_scrim_color">#88EEEEEE</color>
     <color name="action_bar_title_color">@android:color/white</color>
     <color name="window_background">@android:color/white</color>
+    <color name="footer_bg">#ffbebebe</color>
 </resources>

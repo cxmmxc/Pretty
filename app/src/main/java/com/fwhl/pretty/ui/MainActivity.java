@@ -14,10 +14,13 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.FrameLayout;
+import android.widget.ListView;
 
 import com.fwhl.pretty.BaseActivity;
 import com.fwhl.pretty.R;
+import com.fwhl.pretty.adapter.LeftListAdapter;
 import com.fwhl.pretty.constant.Constant;
 import com.fwhl.pretty.fragment.CategoryFragment;
 import com.fwhl.pretty.fragment.MainFragment;
@@ -25,6 +28,8 @@ import com.fwhl.pretty.util.FragmentChangeManager;
 import com.fwhl.pretty.util.ToastAlone;
 import com.lidroid.xutils.view.annotation.ContentView;
 import com.lidroid.xutils.view.annotation.ViewInject;
+
+import java.util.Arrays;
 
 @ContentView(R.layout.activity_main)
 public class MainActivity extends BaseActivity {
@@ -42,10 +47,15 @@ public class MainActivity extends BaseActivity {
     @ViewInject(R.id.content_layout)
     FrameLayout content_layout;
 
+    @ViewInject(R.id.left_drawer_listview)
+    ListView left_drawer_listview;
     private FragmentChangeManager mFragmentManager;
 
     private ActionBarDrawerToggle mDrawerToggle;
 
+    private LeftListAdapter mListAdapter;
+    
+    private int mCurrentPosition;
     @Override
     protected void initView() {
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, 0, 0){
@@ -74,6 +84,13 @@ public class MainActivity extends BaseActivity {
         mFragmentManager.addFragment(Constant.HOME_FRAGMENT, MainFragment.class, null);
         mFragmentManager.addFragment(Constant.CATEGORY_FRAGMENT, CategoryFragment.class, null);
         mFragmentManager.onFragmentChanged(Constant.HOME_FRAGMENT);
+
+        mListAdapter = new LeftListAdapter(this);
+        left_drawer_listview.setAdapter(mListAdapter);
+
+        mListAdapter.setData(Arrays.asList(getResources().getStringArray(R.array.drawble_left_list)));
+        left_drawer_listview.setItemChecked(0, true);
+        mCurrentPosition = 0;
     }
 
     @Override
@@ -142,6 +159,7 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void initToolbar(){
         super.initToolbar(toolbar);
+        toolbar.setTitle(getResources().getString(R.string.meinv_tuijian));
     }
     
     Handler mHand = new Handler(){
@@ -171,8 +189,34 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void setListener() {
-        
+        left_drawer_listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if(mCurrentPosition == position) {
+                    return;
+                }
+                openOrCloseDrawer();
+                mCurrentPosition = position;
+                left_drawer_listview.setItemChecked(position, true);
+                EneterFragment(position);
+            }
+        });
 
+    }
+
+    private void EneterFragment(int position) {
+        switch (position) {
+            case 0:
+                //进入MainFragment
+                mFragmentManager.onFragmentChanged(Constant.HOME_FRAGMENT);
+                toolbar.setTitle(getResources().getString(R.string.meinv_tuijian));
+                break;
+            case 1:
+                //进入分类Fragment
+                mFragmentManager.onFragmentChanged(Constant.CATEGORY_FRAGMENT);
+                toolbar.setTitle(getResources().getString(R.string.meinv_fenlei));
+                break;
+        }
     }
 
     @Override

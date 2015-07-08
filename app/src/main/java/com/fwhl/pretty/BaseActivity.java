@@ -29,10 +29,10 @@ public abstract class BaseActivity extends AppCompatActivity {
         LogUtils.customTagPrefix = "cxm";
         ViewUtils.inject(this);
         mBitmapUtils = new BitmapUtils(this);
-        initToolbar();
         initView();
         initData();
         setListener();
+        initToolbar();
     }
 
     @TargetApi(19)

@@ -44,7 +44,7 @@ import uk.co.senab.photoview.PhotoViewAttacher;
 
 /**
  * Created by Terry.Chen on 2015/7/6 14:40.
- * Description:
+ * Description:首页的Fragment
  * Email:cxm_lmz@163.com
  */
 public class MainFragment extends BaseFragment {

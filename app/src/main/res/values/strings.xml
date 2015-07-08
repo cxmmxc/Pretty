@@ -3,7 +3,14 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="load">加载ing</string>
+    
 
     <string name="str_exit_toast">双击退出,欢迎再来！</string>
-    
+    <array name="drawble_left_list">
+        <item >"美女推荐"</item>
+        <item >"美女分类"</item>
+    </array>
+    <string name="meinv_tuijian">美女推荐</string>
+    <string name="meinv_fenlei">美女分类</string>
 </resources>
