@@ -39,9 +39,6 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import uk.co.senab.photoview.PhotoView;
-import uk.co.senab.photoview.PhotoViewAttacher;
-
 /**
  * Created by Terry.Chen on 2015/7/6 14:40.
  * Description:首页的Fragment
@@ -64,6 +61,9 @@ public class MainFragment extends BaseFragment {
 
     @ViewInject(R.id.header_layout)
     RelativeLayout header_layout;
+    
+    @ViewInject(R.id.empty_layout)
+    LinearLayout empty_layout;
 
 
     private RecyclerView.LayoutManager mlayoutManager;
@@ -113,6 +113,7 @@ public class MainFragment extends BaseFragment {
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
+                progress.setVisibility(View.VISIBLE);
             }
 
             /**
@@ -175,6 +176,8 @@ public class MainFragment extends BaseFragment {
                         }
                         mAdapter.setData(mMainPics);
                     }
+                }else {
+                    empty_layout.setVisibility(View.VISIBLE);
                 }
             }
 
@@ -183,7 +186,7 @@ public class MainFragment extends BaseFragment {
                 Document document = null;
                 try {
                     document = Jsoup.connect(
-                            Constant.JSOUP_SIMEI_URL).get();
+                            Constant.JSOUP_SIMEI_URL).timeout(8000).get();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -327,6 +330,19 @@ public class MainFragment extends BaseFragment {
 
             }
         });
+
+        empty_layout.setOnClickListener(new View.OnClickListener() {
+            /**
+             * Called when a view has been clicked.
+             *
+             * @param v The view that was clicked.
+             */
+            @Override
+            public void onClick(View v) {
+                empty_layout.setVisibility(View.GONE);
+                getInterlData();
+            }
+        });
     }
 
 
@@ -361,6 +377,10 @@ public class MainFragment extends BaseFragment {
 
         public MainPagerAdapter() {
             picBeans = new ArrayList<MainPicBean>();
+            mBitmapUtils.configDiskCacheEnabled(true)
+                    .configMemoryCacheEnabled(true)
+                    .configDefaultLoadingImage(R.mipmap.default_meitu_class_loding)
+                    .configDefaultLoadFailedImage(R.mipmap.default_meitu_class_error);
         }
 
         /**
@@ -394,20 +414,20 @@ public class MainFragment extends BaseFragment {
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
             final MainPicBean picBean = picBeans.get(position);
-            PhotoView photoView = new PhotoView(container.getContext());
-            photoView.setScaleType(ImageView.ScaleType.FIT_XY);
-            mBitmapUtils.display(photoView, picBean.getPicUrl());
-            container.addView(photoView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-            photoView.setOnPhotoTapListener(new PhotoViewAttacher.OnPhotoTapListener() {
+            ImageView imageView = new ImageView(mContext);
+            imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+            mBitmapUtils.display(imageView, picBean.getPicUrl());
+            container.addView(imageView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+            imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onPhotoTap(View view, float v, float v1) {
+                public void onClick(View v) {
                     Intent itent = new Intent();
                     itent.setClass(mContext, PicDetailActivity.class);
                     itent.putExtra("bean", picBean);
                     startActivity(itent);
                 }
             });
-            return photoView;
+            return imageView;
         }
 
         /**

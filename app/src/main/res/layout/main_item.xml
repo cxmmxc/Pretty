@@ -15,7 +15,7 @@
         <ImageView
             android:id="@+id/imageview"
             android:layout_width="match_parent"
-            android:layout_height="190dip"
+            android:layout_height="200dip"
             android:scaleType="centerCrop"
             android:layout_centerInParent="true"
             />

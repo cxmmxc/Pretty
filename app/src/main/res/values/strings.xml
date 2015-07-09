@@ -13,4 +13,5 @@
     </array>
     <string name="meinv_tuijian">美女推荐</string>
     <string name="meinv_fenlei">美女分类</string>
+    <string name="click_and_retry">加载失败，点击重试</string>
 </resources>

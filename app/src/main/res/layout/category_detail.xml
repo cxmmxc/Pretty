@@ -3,20 +3,55 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
+
     <include layout="@layout/toolbar_layout" />
-    <com.handmark.pulltorefresh.library.PullToRefreshGridView
-        xmlns:ptr="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/pull_refresh_grid"
+
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:numColumns="2"
-        android:verticalSpacing="2dp"
-        android:horizontalSpacing="2dp"
-        android:columnWidth="100dp"
-        android:stretchMode="columnWidth"
-        android:gravity="fill"
-        ptr:ptrMode="both"
-        />
-        
-        
+        android:layout_height="match_parent">
+
+        <com.handmark.pulltorefresh.library.PullToRefreshGridView xmlns:ptr="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/pull_refresh_grid"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:columnWidth="100dp"
+            android:gravity="fill"
+            android:horizontalSpacing="2dp"
+            android:numColumns="2"
+            android:stretchMode="columnWidth"
+            android:verticalSpacing="2dp"
+            ptr:ptrMode="both" />
+        <ProgressBar
+            android:id="@+id/progress"
+            style="@style/style_loadingdialog"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="20dip"
+            android:indeterminate="false"
+            android:visibility="gone"
+            android:indeterminateDuration="1500" />
+
+        <LinearLayout
+            android:id="@+id/empty_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:src="@mipmap/load_fail" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dip"
+                android:text="@string/click_and_retry" />
+        </LinearLayout>
+    </RelativeLayout>
+
 </LinearLayout>

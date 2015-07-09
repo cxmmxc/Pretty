@@ -63,14 +63,14 @@ public class MainActivity extends BaseActivity {
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
                 invalidateOptionsMenu();
-                toolbar.setTitle(R.string.app_name);
+//                toolbar.setTitle(R.string.app_name);
             }
 
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
                 invalidateOptionsMenu();
-                toolbar.setTitle(getResources().getString(R.string.app_name));
+//                toolbar.setTitle(getResources().getString(R.string.app_name));
             }
         };
         mDrawerToggle.setDrawerIndicatorEnabled(true);
@@ -159,7 +159,7 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void initToolbar(){
         super.initToolbar(toolbar);
-        toolbar.setTitle(getResources().getString(R.string.meinv_tuijian));
+        toolbar.setTitle(R.string.meinv_tuijian);
     }
     
     Handler mHand = new Handler(){
@@ -201,6 +201,15 @@ public class MainActivity extends BaseActivity {
                 EneterFragment(position);
             }
         });
+
+        if (toolbar != null){
+            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    openOrCloseDrawer();
+                }
+            });
+        }
 
     }
 

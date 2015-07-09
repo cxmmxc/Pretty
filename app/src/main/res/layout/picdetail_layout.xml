@@ -11,10 +11,15 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.fwhl.pretty.view.HackyViewPager
+        <!--<com.fwhl.pretty.view.HackyViewPager
             android:id="@+id/viewpager"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent" />-->
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/detail_recyView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
         <ProgressBar
             android:id="@+id/progress"
             android:layout_width="wrap_content"
@@ -23,6 +28,28 @@
             style="@style/style_loadingdialog"
             android:layout_centerInParent="true"
             android:layout_marginTop="20dip"
+            android:visibility="gone"
             android:indeterminate="false" />
+        <LinearLayout
+            android:id="@+id/empty_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_centerInParent="true"
+            android:visibility="gone"
+            >
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" 
+                android:src="@mipmap/load_fail"
+                android:layout_gravity="center_horizontal"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" 
+                android:text="@string/click_and_retry"
+                android:layout_marginTop="8dip"
+                />
+        </LinearLayout>
     </RelativeLayout>
 </LinearLayout>
