@@ -3,6 +3,7 @@ package com.fwhl.pretty.view;
 import android.app.Dialog;
 import android.content.Context;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.fwhl.pretty.R;
 
@@ -16,6 +17,7 @@ public class LoadingDialog extends Dialog {
 
     private ProgressBar progress;
     private Context mContext;
+    private TextView text_dec;
     public LoadingDialog(Context context) {
         super(context, R.style.style_loadingdialog);
         mContext = context;
@@ -26,7 +28,12 @@ public class LoadingDialog extends Dialog {
     private void initView() {
         setContentView(R.layout.loading);
 
+        text_dec = (TextView) findViewById(R.id.text_dec);
         progress = (ProgressBar) findViewById(R.id.progress);
+    }
+    
+    public void setText_dec(String src) {
+        text_dec.setText(src);
     }
 
     private void initData() {

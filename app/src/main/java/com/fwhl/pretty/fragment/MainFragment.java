@@ -23,6 +23,7 @@ import com.fwhl.pretty.bean.MainPicBean;
 import com.fwhl.pretty.constant.Constant;
 import com.fwhl.pretty.inter.OnItemListener;
 import com.fwhl.pretty.ui.PicDetailActivity;
+import com.fwhl.pretty.util.StrUtil;
 import com.lidroid.xutils.ViewUtils;
 import com.lidroid.xutils.util.LogUtils;
 import com.lidroid.xutils.view.annotation.ViewInject;
@@ -139,7 +140,11 @@ public class MainFragment extends BaseFragment {
                     if(elements != null) {
                         for (Element element2 : elements) {
                             MainPicBean pic = new MainPicBean();
-                            String href = Constant.JSOUP_SIMEI_URL + element2.attr("href");
+                            String old_href = element2.attr("href");
+                            String type = StrUtil.getBeanStrType(old_href);
+                            type = StrUtil.getTypeToStr(type);
+                            pic.setType(type);
+                            String href = Constant.JSOUP_SIMEI_URL + old_href;
                             String title = element2.attr("title");
                             Element src_ele = element2.getElementsByAttribute("src").first();
                             String imgurl = Constant.JSOUP_SIMEI_URL + src_ele.attr("src");
@@ -164,7 +169,11 @@ public class MainFragment extends BaseFragment {
                                     MainPicBean bean = new MainPicBean();
                                     Element href_1 = child1.select("a[href]").first();
                                     Element src_1 = href_1.getElementsByAttribute("src").first();
-                                    String href = Constant.JSOUP_SIMEI_URL + href_1.attr("href");
+                                    String old_href = href_1.attr("href");
+                                    String type = StrUtil.getBeanStrType(old_href);
+                                    type = StrUtil.getTypeToStr(type);
+                                    bean.setType(type);
+                                    String href = Constant.JSOUP_SIMEI_URL + old_href;
                                     String title = href_1.attr("title");
                                     String img_url = src_1.attr("src");
                                     bean.setTitle(title);

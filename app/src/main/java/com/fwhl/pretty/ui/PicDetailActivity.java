@@ -1,5 +1,6 @@
 package com.fwhl.pretty.ui;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -9,11 +10,13 @@ import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.fwhl.pretty.BaseActivity;
 import com.fwhl.pretty.R;
 import com.fwhl.pretty.adapter.PicDetailRecyAdapter;
 import com.fwhl.pretty.bean.MainPicBean;
+import com.fwhl.pretty.inter.OnItemListener;
 import com.lidroid.xutils.BitmapUtils;
 import com.lidroid.xutils.view.annotation.ContentView;
 import com.lidroid.xutils.view.annotation.ViewInject;
@@ -43,13 +46,16 @@ public class PicDetailActivity extends BaseActivity {
     Toolbar toolbar;
     @ViewInject(R.id.empty_layout)
     LinearLayout empty_layout;
+    @ViewInject(R.id.pagesize_text)
+    TextView pagesize_text;
+    @ViewInject(R.id.title_text)
+    TextView title_text;
 
     private ArrayList<MainPicBean> mMainPics;
 
     private RecyclerView.LayoutManager mLayoutManager;
 
     private PicDetailRecyAdapter mPicAdapter;
-//    private ViewPagerAdapter mAdapter;
 
     @Override
     protected void initView() {
@@ -61,12 +67,13 @@ public class PicDetailActivity extends BaseActivity {
 
         //通过url进行解析
         mNowHerfUrl = mPicBean.getHrefUrl();
-
-        toolbar.setTitle(mPicBean.getTitle());
+        title_text.setText(mPicBean.getTitle());
+        toolbar.setTitle(mPicBean.getType());
         mBitmapUtils = new BitmapUtils(this);
-        mBitmapUtils.configDiskCacheEnabled(true);
-        mBitmapUtils.configMemoryCacheEnabled(true);
-        mBitmapUtils.configDefaultLoadingImage(R.mipmap.default_pretty_loding);
+        mBitmapUtils.configDiskCacheEnabled(true)
+                .configMemoryCacheEnabled(true)
+                .configDefaultLoadingImage(R.mipmap.default_pretty_loding)
+                .configDefaultLoadFailedImage(R.mipmap.default_meitu_error);
 
         mLayoutManager = new LinearLayoutManager(this);
         detail_recyView.setLayoutManager(mLayoutManager);
@@ -74,8 +81,6 @@ public class PicDetailActivity extends BaseActivity {
         detail_recyView.setAdapter(mPicAdapter);
 
         mMainPics = new ArrayList<MainPicBean>();
-//        mAdapter = new ViewPagerAdapter();
-//        viewpager.setAdapter(mAdapter);
         new JsoupTask().execute(mNowHerfUrl);
     }
 
@@ -114,6 +119,7 @@ public class PicDetailActivity extends BaseActivity {
                 return;
             }
             Log.e("cxm", mMainPics.toString());
+            pagesize_text.setText(mMainPics.size() + "p");
             mPicAdapter.setData(mMainPics);
         }
 
@@ -183,6 +189,22 @@ public class PicDetailActivity extends BaseActivity {
                 new JsoupTask().execute(mNowHerfUrl);
             }
         });
+
+        mPicAdapter.setOnItemListener(new OnItemListener() {
+            @Override
+            public void OnItemClickLister(View view, int position) {
+                Intent intent = new Intent(mContext, DetailPagerActivity.class);
+                intent.putExtra("beans", mMainPics);
+                intent.putExtra("position", position);
+                intent.putExtra("title", mPicBean.getTitle());
+                mContext.startActivity(intent);
+            }
+
+            @Override
+            public void OnLongPressListener(View view, int position) {
+
+            }
+        });
     }
 
 
@@ -192,78 +214,5 @@ public class PicDetailActivity extends BaseActivity {
     }
 
 
-//    class ViewPagerAdapter extends PagerAdapter {
-//
-//        private ArrayList<MainPicBean> picBeans;
-//
-//        public ViewPagerAdapter() {
-//            picBeans = new ArrayList<MainPicBean>();
-//        }
-//
-//        /**
-//         * Return the number of views available.
-//         */
-//        @Override
-//        public int getCount() {
-//            return picBeans.size();
-//        }
-//
-//        public void setData(ArrayList<MainPicBean> beans) {
-//            if (beans != null && !beans.isEmpty()) {
-//                picBeans.clear();
-//                picBeans.addAll(beans);
-//            }
-//            notifyDataSetChanged();
-//        }
-//
-//
-//        /**
-//         * Create the page for the given position.  The adapter is responsible
-//         * for adding the view to the container given here, although it only
-//         * must ensure this is done by the time it returns from
-//         * {@link #finishUpdate(ViewGroup)}.
-//         *
-//         * @param container The containing View in which the page will be shown.
-//         * @param position  The page position to be instantiated.
-//         * @return Returns an Object representing the new page.  This does not
-//         * need to be a View, but can be some other container of the page.
-//         */
-//        @Override
-//        public Object instantiateItem(ViewGroup container, int position) {
-//            MainPicBean picBean = picBeans.get(position);
-//            PhotoView photoView = new PhotoView(container.getContext());
-//            mBitmapUtils.display(photoView, picBean.getPicUrl());
-//            container.addView(photoView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-//            return photoView;
-//        }
-//
-//        /**
-//         * Remove a page for the given position.  The adapter is responsible
-//         * for removing the view from its container, although it only must ensure
-//         * this is done by the time it returns from {@link #finishUpdate(ViewGroup)}.
-//         *
-//         * @param container The containing View from which the page will be removed.
-//         * @param position  The page position to be removed.
-//         * @param object    The same object that was returned by
-//         *                  {@link #instantiateItem(View, int)}.
-//         */
-//        @Override
-//        public void destroyItem(ViewGroup container, int position, Object object) {
-//            container.removeView((View) object);
-//        }
-//
-//        /**
-//         * Determines whether a page View is associated with a specific key object
-//         * as returned by {@link #instantiateItem(ViewGroup, int)}. This method is
-//         * required for a PagerAdapter to function properly.
-//         *
-//         * @param view   Page View to check for association with <code>object</code>
-//         * @param object Object to check for association with <code>view</code>
-//         * @return true if <code>view</code> is associated with the key object <code>object</code>
-//         */
-//        @Override
-//        public boolean isViewFromObject(View view, Object object) {
-//            return view == object;
-//        }
-//    }
+
 }

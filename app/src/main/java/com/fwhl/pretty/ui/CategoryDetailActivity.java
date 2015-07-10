@@ -175,6 +175,7 @@ public class CategoryDetailActivity extends BaseActivity {
             String src_img = element3.getElementsByAttribute("src").first().attr("src");
             bean.setTitle(title);
             bean.setPicUrl(src_img);
+            bean.setType(mCateBean.getTitle());
             bean.setHrefUrl(mHref_Base_Url + href);
             beans.add(bean);
         }

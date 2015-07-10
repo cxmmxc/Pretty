@@ -3,6 +3,9 @@
     package="com.fwhl.pretty" >
 
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name = "android.permission.SET_WALLPAPER"/>
+    <uses-permission android:name="ANDROID.PERMISSION.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="ANDROID.PERMISSION.READ_EXTERNAL_STORAGE"/>
     
     <application
         android:name=".PrettyApp"
@@ -25,6 +28,9 @@
             android:screenOrientation="portrait"
             />
         <activity android:name=".ui.CategoryDetailActivity"
+            android:screenOrientation="portrait"
+            />
+        <activity android:name=".ui.DetailPagerActivity"
             android:screenOrientation="portrait"
             />
     </application>

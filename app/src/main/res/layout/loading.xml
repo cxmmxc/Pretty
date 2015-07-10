@@ -4,23 +4,36 @@
     android:layout_height="match_parent"
     android:background="@android:color/transparent"
     android:orientation="vertical">
-    
-        <View
-            android:id="@+id/view_bg"
-            android:layout_width="120dip"
-            android:layout_height="120dip"
-            android:background="@drawable/view_bg"
-            android:layout_centerInParent="true"
-            />
-        <ProgressBar
-            android:id="@+id/progress"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" 
-            android:indeterminateDuration="1500"
-            style="@style/style_loadingdialog"
-            android:layout_centerInParent="true"
-            android:layout_marginTop="20dip"
-            android:indeterminate="false" />
-        
+
+    <View
+        android:id="@+id/view_bg"
+        android:layout_width="130dip"
+        android:layout_height="130dip"
+        android:layout_centerInParent="true"
+        android:background="@drawable/view_bg" />
+
+    <ProgressBar
+        android:id="@+id/progress"
+        style="@style/style_loadingdialog"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="20dip"
+        android:indeterminate="false"
+        android:indeterminateDuration="1500" />
+
+    <TextView
+        android:id="@+id/text_dec"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/view_bg"
+        android:layout_alignRight="@id/view_bg"
+        android:layout_alignBottom="@id/view_bg"
+        android:gravity="center"
+        android:layout_below="@id/progress"
+        android:layout_centerHorizontal="true"
+        android:text="加载中"
+        android:layout_marginTop="5dip" />
+
 
 </RelativeLayout>

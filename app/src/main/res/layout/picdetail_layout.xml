@@ -11,14 +11,63 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <!--<com.fwhl.pretty.view.HackyViewPager
-            android:id="@+id/viewpager"
+        <RelativeLayout
+            android:id="@+id/title_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />-->
+            android:layout_height="wrap_content"
+            android:padding="8dip"
+            >
+            <TextView
+                android:id="@+id/pagesize_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" 
+                android:text="加载ing"
+                android:layout_alignParentRight="true"
+                android:textSize="16sp"
+                android:textColor="@color/text_second_color_primary"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="8dip"
+                />
+            <ImageView
+                android:id="@+id/pic_size_img"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@mipmap/picture_size_icon"
+                android:layout_toLeftOf="@id/pagesize_text"
+                android:layout_marginRight="8dip"
+                android:layout_centerVertical="true"
+                
+                />
+            <TextView
+                android:id="@+id/title_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" 
+                android:layout_alignParentLeft="true"
+                android:layout_toLeftOf="@id/pic_size_img"
+                android:textSize="18sp"
+                android:textColor="@android:color/black"
+                android:layout_centerVertical="true"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </RelativeLayout>
+        <View
+            android:id="@+id/spit_view"
+            android:layout_width="match_parent"
+            android:layout_height="1dip"
+            android:background="@color/view_spit_bg"
+            android:layout_below="@id/title_layout"
+            android:layout_marginTop="5dip"
+            android:layout_marginBottom="6dip"
+            />
         <android.support.v7.widget.RecyclerView
             android:id="@+id/detail_recyView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_below="@id/spit_view"
             />
         <ProgressBar
             android:id="@+id/progress"

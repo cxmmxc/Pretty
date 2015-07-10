@@ -1,5 +1,7 @@
 package com.fwhl.pretty.constant;
 
+import android.os.Environment;
+
 /**
  * Created by Terry.Chen on 2015/6/29 16:33.
  * Description:常量类
@@ -20,6 +22,10 @@ public class Constant {
     public final static String SHOWGIRL = "http://imgchr.com/images/showgirl.jpg";
     public final static String XINGGAN = "http://imgchr.com/images/xinggan.jpg";
     public final static String WANGLUO = "http://imgchr.com/images/wangluo.jpg";
-    
+
     public final static String Category_Josn = "{\"list\":[{\"title\":\"丝袜美腿\",\"img_url\":\"http://imgchr.com/images/siwa.jpg\",\"href_url\":\"http://www.simei8.com/html/siwameitui/\",\"type\":0},{\"title\":\"Cosplay\",\"img_url\":\"http://imgchr.com/images/cosplay.jpg\",\"href_url\":\"http://www.simei8.com/html/cosplay/\",\"type\":1},{\"title\":\"ShowGirl\",\"img_url\":\"http://imgchr.com/images/showgirl.jpg\",\"href_url\":\"http://www.simei8.com/html/showgirl/\",\"type\":2},{\"title\":\"性感美女\",\"img_url\":\"http://imgchr.com/images/xinggan.jpg\",\"href_url\":\"http://www.simei8.com/html/xinggan/\",\"type\":3},{\"title\":\"网络美女\",\"img_url\":\"http://imgchr.com/images/wangluo.jpg\",\"href_url\":\"http://www.simei8.com/html/wangluo/\",\"type\":4}]}";
+    
+    private static String base_dir = Environment.getExternalStorageDirectory().getPath();
+    
+    public final static String CaceFileDir = base_dir+"/DCIM/1024MM";
 }

@@ -11,6 +11,15 @@ public class MainPicBean implements Serializable{
     private String picUrl;
     private String title;
     private String hrefUrl;
+    private String type;//丝袜美腿、showgirl....
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 
     public String getHrefUrl() {
         return hrefUrl;
@@ -42,6 +51,7 @@ public class MainPicBean implements Serializable{
                 "picUrl='" + picUrl + '\'' +
                 ", title='" + title + '\'' +
                 ", hrefUrl='" + hrefUrl + '\'' +
+                ", type='" + type + '\'' +
                 '}';
     }
 }

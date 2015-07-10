@@ -11,4 +11,5 @@
     <color name="action_bar_title_color">@android:color/white</color>
     <color name="window_background">@android:color/white</color>
     <color name="footer_bg">#ffbebebe</color>
+    <color name="view_spit_bg">#BEB2B2B2</color>
 </resources>
