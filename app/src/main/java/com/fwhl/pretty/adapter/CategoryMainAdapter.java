@@ -39,9 +39,10 @@ public class CategoryMainAdapter extends RecyclerView.Adapter<CategoryMainAdapte
         mPicBeans = new ArrayList<CategoryBean>();
         mLayoutInflater = LayoutInflater.from(context);
         mBitmapUtil = new BitmapUtils(context);
-        mBitmapUtil.configDefaultLoadingImage(R.mipmap.default_pretty_loding);
-        mBitmapUtil.configMemoryCacheEnabled(true);
-        mBitmapUtil.configDiskCacheEnabled(true);
+        mBitmapUtil.configDefaultLoadingImage(R.mipmap.default_meitu_head_loding)
+                .configDefaultLoadFailedImage(R.mipmap.default_meitu_head_error)
+                .configMemoryCacheEnabled(true)
+                .configDiskCacheEnabled(true);
     }
     
     public void setData(ArrayList<CategoryBean> beans) {

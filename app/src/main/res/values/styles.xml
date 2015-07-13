@@ -30,7 +30,21 @@
         <item name="selectableItemBackground">@drawable/selector_draw_listitem</item>
     </style>
 
-    <style name="style_loadingdialog" parent="AppTheme">
+    <style name="style_loadingdialog" parent="@android:style/Theme.Dialog">
+        <!-- Dialog的windowFrame框为无 -->
+        <item name="android:windowFrame">@null</item>
+        <!-- 是否浮现在activity之上 -->
+        <item name="android:windowIsFloating">false</item>
+        <!-- 是否半透明 -->
+        <item name="android:windowIsTranslucent">true</item>
+        <!-- 是否显示title -->
+        <item name="android:windowNoTitle">true</item>
+        <!-- 设置dialog的背景 -->
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <!-- 背景是否模糊显示 -->
+        <item name="android:backgroundDimEnabled">false</item>
+        <!-- 动画效果 -->
+        <item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item>
         <item name="android:indeterminateDrawable">@drawable/progressbar_large</item>
     </style>
 

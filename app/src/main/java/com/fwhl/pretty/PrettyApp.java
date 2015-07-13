@@ -4,6 +4,7 @@ import android.app.Application;
 import android.os.Environment;
 
 import com.fwhl.pretty.util.ToastAlone;
+import com.lidroid.xutils.util.LogUtils;
 
 import java.io.File;
 
@@ -16,6 +17,7 @@ public class PrettyApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        LogUtils.customTagPrefix = "cxm";
         initData();
         ToastAlone.init(this);
 
@@ -24,8 +26,9 @@ public class PrettyApp extends Application {
     private void initData() {
         String path = Environment.getExternalStorageDirectory().getPath();
         File file = new File(path+"/DCIM/1024MM");
+        LogUtils.v("mkdir="+path);
         if(!file.exists()) {
-            file.mkdir();
+            boolean mkdir = file.mkdir();
         }
     }
 }

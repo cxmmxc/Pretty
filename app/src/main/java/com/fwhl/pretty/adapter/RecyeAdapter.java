@@ -39,9 +39,10 @@ public class RecyeAdapter extends RecyclerView.Adapter<RecyeAdapter.MainHolder> 
         mPicBeans = new ArrayList<MainPicBean>();
         mLayoutInflater = LayoutInflater.from(context);
         mBitmapUtil = new BitmapUtils(context);
-        mBitmapUtil.configDefaultLoadingImage(R.mipmap.default_pretty_loding);
-        mBitmapUtil.configMemoryCacheEnabled(true);
-        mBitmapUtil.configDiskCacheEnabled(true);
+        mBitmapUtil.configDefaultLoadingImage(R.mipmap.default_pretty_loding)
+                .configDefaultLoadFailedImage(R.mipmap.default_meitu_error)
+                .configMemoryCacheEnabled(true)
+                .configDiskCacheEnabled(true);
     }
     
     public void setData(ArrayList<MainPicBean> beans) {

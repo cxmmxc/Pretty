@@ -4,6 +4,8 @@ import android.app.WallpaperManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.View;
@@ -19,14 +21,18 @@ import com.fwhl.pretty.constant.Constant;
 import com.fwhl.pretty.util.ToastAlone;
 import com.fwhl.pretty.view.HackyViewPager;
 import com.fwhl.pretty.view.LoadingDialog;
+import com.lidroid.xutils.util.LogUtils;
 import com.lidroid.xutils.view.annotation.ContentView;
 import com.lidroid.xutils.view.annotation.ViewInject;
 import com.lidroid.xutils.view.annotation.event.OnClick;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 import uk.co.senab.photoview.PhotoView;
@@ -55,8 +61,9 @@ public class DetailPagerActivity extends BaseActivity {
     ArrayList<MainPicBean> mMainPics;
     private int position;
     private int totalSize;
-    
+
     private int mCurrentPosition;
+    LoadingDialog loadingDialog;
 
     @Override
     protected void initView() {
@@ -66,6 +73,8 @@ public class DetailPagerActivity extends BaseActivity {
 
     @Override
     protected void initData() {
+
+        loadingDialog = new LoadingDialog(mContext);
 
         mAdapter = new ViewPagerAdapter();
         viewpager.setAdapter(mAdapter);
@@ -107,53 +116,121 @@ public class DetailPagerActivity extends BaseActivity {
             }
         });
     }
-    
+
     @OnClick(R.id.download_text)
     public void downLoadImg(View view) {
         //将图片保存到本地的目录中
         MainPicBean picBean = mMainPics.get(mCurrentPosition);
-        
+
         //循环cache目录下的文件，看是否存在
-        
-        
+
+
         File diskCache = mBitmapUtils.getBitmapFileFromDiskCache(picBean.getPicUrl());
-        boolean isPicCached = isPicCached(picBean.getPicUrl());
-        if(isPicCached){
+        String fileName = urlToFileName(picBean.getPicUrl());
+        boolean isPicCached = isPicCached(fileName);
+        if (isPicCached) {
             ToastAlone.show("图片已保存，请查看目录DCIM/1024MM");
         } else {
-            File file_dicm = new File(Constant.CaceFileDir + "/" + picBean.getPicUrl());
-            try {
-                file_dicm.createNewFile();
-                FileReader reader = new FileReader(diskCache);
-                FileWriter writer = new FileWriter(file_dicm);
-                int ch = 0;
-                while ((ch = reader.read()) != -1) {
-                    writer.write(ch);
-                }
-                writer.close();
-                reader.close();
-                ToastAlone.show("图片保存成功，请查看目录DCIM/1024MM");
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                
+            File file_dicm = new File(Constant.CaceFileDir + "/" + fileName);
+            if(diskCache != null) {
+                LogUtils.e(diskCache.getAbsolutePath()+","+file_dicm.getAbsolutePath());
+                copyFile(diskCache.getAbsolutePath(), file_dicm.getAbsolutePath());
+            }else {
+                ToastAlone.show("存储失败");
             }
+//            try {
+//                FileReader reader = new FileReader(diskCache);
+//                FileWriter writer = new FileWriter(file_dicm);
+//                int ch = 0;
+//                while ((ch = reader.read()) != -1) {
+//                    writer.write(ch);
+//                }
+//                writer.close();
+//                reader.close();
+//                ToastAlone.show("图片保存成功，请查看目录DCIM/1024MM");
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            } finally {
+//
+//            }
+            }
+    }
+
+    /**
+     * 复制单个文件  
+     * @param oldPath String 原文件路径 如：c:/fqf.txt  
+     * @param newPath String 复制后路径 如：f:/fqf.txt  
+     * @return boolean
+     */
+    public void copyFile(String oldPath, String newPath) {
+        try {
+            int bytesum = 0;
+            int byteread = 0;
+            File oldfile = new File(oldPath);
+            if (!oldfile.exists()) { //文件不存在时   
+                InputStream inStream = new FileInputStream(oldPath); //读入原文件   
+                FileOutputStream fs = new FileOutputStream(newPath);
+                byte[] buffer = new byte[1444];
+                int length;
+                while ( (byteread = inStream.read(buffer)) != -1) {
+                    bytesum += byteread; //字节数 文件大小   
+                    fs.write(buffer, 0, byteread);
+                }
+                inStream.close();
+                ToastAlone.show("图片保存成功，请查看目录DCIM/1024MM");
+            }
+        }
+        catch (Exception e) {
+            ToastAlone.show("保存图片操作出错");
+            e.printStackTrace();
+
         }
 
     }
+
+    private String urlToFileName(String imgUrl) {
+        String[] split = imgUrl.split("/");
+        String fileName = split[split.length-1];
+        return fileName;
+    }
+
     
     @OnClick(R.id.paper_text)
     public void setWrallPaper(View view) {
-        new WrallTask().execute();
+        loadingDialog.show();
+//        new WrallTask().execute();
+        mHandler.sendEmptyMessageDelayed(1,1500);
+        
     }
     
-    class WrallTask extends AsyncTask<String, Integer ,Void> {
+    Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            WallpaperManager wallpaperManager = WallpaperManager.getInstance(mContext);
+            MainPicBean picBean = mMainPics.get(mCurrentPosition);
+            String diskCache = mBitmapUtils.getBitmapFileFromDiskCache(picBean.getPicUrl()).getAbsolutePath();
+            Bitmap bitmap = BitmapFactory.decodeFile(diskCache);
+            try {
+                wallpaperManager.setBitmap(bitmap);
+                ToastAlone.show("设置成功");
+            } catch (IOException e) {
+                ToastAlone.show("设置失败");
+                e.printStackTrace();
+            }
+            loadingDialog.dismiss();
+        }
+    };
 
-        LoadingDialog loadingDialog = new LoadingDialog(mContext);
+    class WrallTask extends AsyncTask<String, Integer, Void> {
+
+        final LoadingDialog loadingDialog = new LoadingDialog(mContext);
+
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            loadingDialog.show();
+            if (!DetailPagerActivity.this.isFinishing())
+                loadingDialog.show();
         }
 
         @Override
@@ -175,14 +252,15 @@ public class DetailPagerActivity extends BaseActivity {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            loadingDialog.dismiss();
+            if (!DetailPagerActivity.this.isFinishing())
+                loadingDialog.dismiss();
         }
     }
-    
+
     private boolean isPicCached(String img_url) {
         File file = new File(Constant.CaceFileDir);
         File[] files = file.listFiles();
-        if(null != files) {
+        if (null != files) {
             int file_size = files.length;
             if (file_size == 0) {
                 return false;
