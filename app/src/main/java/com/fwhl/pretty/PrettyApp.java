@@ -1,6 +1,7 @@
 package com.fwhl.pretty;
 
 import android.app.Application;
+import android.content.pm.PackageManager;
 import android.os.Environment;
 
 import com.fwhl.pretty.util.ToastAlone;
@@ -14,6 +15,9 @@ import java.io.File;
  * Email:cxm_lmz@163.com
  */
 public class PrettyApp extends Application {
+    
+    public static String mVersion;
+    
     @Override
     public void onCreate() {
         super.onCreate();
@@ -26,9 +30,21 @@ public class PrettyApp extends Application {
     private void initData() {
         String path = Environment.getExternalStorageDirectory().getPath();
         File file = new File(path+"/DCIM/1024MM");
-        LogUtils.v("mkdir="+path);
+        LogUtils.v("mkdir=" + path);
         if(!file.exists()) {
             boolean mkdir = file.mkdir();
+        }
+
+        mVersion = getVersionName();
+    }
+
+
+    private String getVersionName() {
+        try {
+            return getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+            return null;
         }
     }
 }

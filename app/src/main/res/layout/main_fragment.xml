@@ -70,5 +70,13 @@
                 android:layout_marginTop="8dip"
                 />
         </LinearLayout>
+        <LinearLayout
+            android:id="@+id/adLayout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:orientation="horizontal"
+            android:gravity="center_horizontal">
+        </LinearLayout>
     </RelativeLayout>
 </LinearLayout>

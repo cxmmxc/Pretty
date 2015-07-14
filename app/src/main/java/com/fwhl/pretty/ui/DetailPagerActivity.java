@@ -21,7 +21,6 @@ import com.fwhl.pretty.constant.Constant;
 import com.fwhl.pretty.util.ToastAlone;
 import com.fwhl.pretty.view.HackyViewPager;
 import com.fwhl.pretty.view.LoadingDialog;
-import com.lidroid.xutils.util.LogUtils;
 import com.lidroid.xutils.view.annotation.ContentView;
 import com.lidroid.xutils.view.annotation.ViewInject;
 import com.lidroid.xutils.view.annotation.event.OnClick;
@@ -29,10 +28,9 @@ import com.lidroid.xutils.view.annotation.event.OnClick;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 
 import uk.co.senab.photoview.PhotoView;
@@ -129,80 +127,88 @@ public class DetailPagerActivity extends BaseActivity {
         String fileName = urlToFileName(picBean.getPicUrl());
         boolean isPicCached = isPicCached(fileName);
         if (isPicCached) {
-            ToastAlone.show("图片已保存，请查看目录DCIM/1024MM");
+            ToastAlone.show("图片已存在，请查看目录DCIM/1024MM");
         } else {
             File file_dicm = new File(Constant.CaceFileDir + "/" + fileName);
-            if(diskCache != null) {
-                LogUtils.e(diskCache.getAbsolutePath()+","+file_dicm.getAbsolutePath());
-                copyFile(diskCache.getAbsolutePath(), file_dicm.getAbsolutePath());
-            }else {
-                ToastAlone.show("存储失败");
-            }
-//            try {
-//                FileReader reader = new FileReader(diskCache);
-//                FileWriter writer = new FileWriter(file_dicm);
-//                int ch = 0;
-//                while ((ch = reader.read()) != -1) {
-//                    writer.write(ch);
-//                }
-//                writer.close();
-//                reader.close();
-//                ToastAlone.show("图片保存成功，请查看目录DCIM/1024MM");
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            } finally {
-//
-//            }
-            }
+            copyFile(diskCache.getAbsolutePath(), file_dicm.getAbsolutePath(), false);
+        }
     }
 
     /**
-     * 复制单个文件  
-     * @param oldPath String 原文件路径 如：c:/fqf.txt  
-     * @param newPath String 复制后路径 如：f:/fqf.txt  
+     * 复制单个文件
+     *
+     * @param srcFileName String 原文件路径 如：c:/fqf.txt
+     * @param destFileName String 复制后路径 如：f:/fqf.txt
      * @return boolean
      */
-    public void copyFile(String oldPath, String newPath) {
+    public boolean  copyFile(String srcFileName, String destFileName, boolean overlay) {
+
+        //判断原文件是否存在
+        File srcFile = new File(srcFileName);
+        if (!srcFile.exists()) {
+            ToastAlone.show("保存失败，文件不存在");
+            return false;
+        } else if (!srcFile.isFile()) {
+            ToastAlone.show("保存失败，文件格式错误");
+            return false;
+        }
+        //判断目标文件是否存在
+        File destFile = new File(destFileName);
+        
+        //准备复制文件
+        int byteread = 0;//读取的位数
+        InputStream in = null;
+        OutputStream out = null;
         try {
-            int bytesum = 0;
-            int byteread = 0;
-            File oldfile = new File(oldPath);
-            if (!oldfile.exists()) { //文件不存在时   
-                InputStream inStream = new FileInputStream(oldPath); //读入原文件   
-                FileOutputStream fs = new FileOutputStream(newPath);
-                byte[] buffer = new byte[1444];
-                int length;
-                while ( (byteread = inStream.read(buffer)) != -1) {
-                    bytesum += byteread; //字节数 文件大小   
-                    fs.write(buffer, 0, byteread);
+        //打开原文件
+            in = new FileInputStream(srcFile);
+            //打开连接到目标文件的输出流
+            out = new FileOutputStream(destFile);
+            byte[] buffer = new byte[1024];
+            //一次读取1024个字节，当byteread为-1时表示文件已经读完
+            while ((byteread = in.read(buffer)) != -1) {
+            //将读取的字节写入输出流
+                out.write(buffer, 0, byteread);
+            }
+            ToastAlone.show("图片保存成功，请查看目录DCIM/1024MM");
+            return true;
+        } catch (Exception e) {
+            ToastAlone.show("图片保存失败");
+            return false;
+        } finally {
+        //关闭输入输出流，注意先关闭输出流，再关闭输入流
+            if (out != null) {
+                try {
+                    out.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-                inStream.close();
-                ToastAlone.show("图片保存成功，请查看目录DCIM/1024MM");
+            }
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
-        catch (Exception e) {
-            ToastAlone.show("保存图片操作出错");
-            e.printStackTrace();
-
-        }
-
     }
 
     private String urlToFileName(String imgUrl) {
         String[] split = imgUrl.split("/");
-        String fileName = split[split.length-1];
+        String fileName = split[split.length - 1];
         return fileName;
     }
 
-    
+
     @OnClick(R.id.paper_text)
     public void setWrallPaper(View view) {
         loadingDialog.show();
 //        new WrallTask().execute();
-        mHandler.sendEmptyMessageDelayed(1,1500);
-        
+        mHandler.sendEmptyMessageDelayed(1, 1500);
+
     }
-    
+
     Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {

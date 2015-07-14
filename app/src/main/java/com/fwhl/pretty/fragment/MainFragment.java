@@ -8,6 +8,7 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +32,11 @@ import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.AnimatorListenerAdapter;
 import com.nineoldandroids.animation.ObjectAnimator;
 import com.nineoldandroids.animation.ValueAnimator;
+
+import net.youmi.android.banner.AdSize;
+import net.youmi.android.banner.AdView;
+import net.youmi.android.banner.AdViewListener;
+import net.youmi.android.spot.SpotManager;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -65,6 +71,9 @@ public class MainFragment extends BaseFragment {
     
     @ViewInject(R.id.empty_layout)
     LinearLayout empty_layout;
+    
+    @ViewInject(R.id.adLayout)
+    LinearLayout adLayout;
 
 
     private RecyclerView.LayoutManager mlayoutManager;
@@ -99,6 +108,48 @@ public class MainFragment extends BaseFragment {
         viewpager_layout.setAdapter(mMainAdapter);
 
         getInterlData();
+        
+        initYoumi();
+    }
+
+    private void initYoumi() {
+        // 加载插播资源
+        SpotManager.getInstance(mContext).loadSpotAds();
+        // 插屏出现动画效果，0:ANIM_NONE为无动画，1:ANIM_SIMPLE为简单动画效果，2:ANIM_ADVANCE为高级动画效果
+        SpotManager.getInstance(mContext).setAnimationType(SpotManager.ANIM_ADVANCE);
+        // 设置插屏动画的横竖屏展示方式，如果设置了横屏，则在有广告资源的情况下会是优先使用横屏图。
+        SpotManager.getInstance(mContext).setSpotOrientation(
+                SpotManager.ORIENTATION_PORTRAIT);
+        showBanner();
+    }
+
+    private void showBanner() {
+
+        // 广告条接口调用（适用于应用）
+        // 将广告条adView添加到需要展示的layout控件中
+         AdView adView = new AdView(mContext, AdSize.FIT_SCREEN);
+         adLayout.addView(adView);
+
+
+        // 监听广告条接口
+        adView.setAdListener(new AdViewListener() {
+
+            @Override
+            public void onSwitchedAd(AdView arg0) {
+                Log.i("YoumiAdDemo", "广告条切换");
+            }
+
+            @Override
+            public void onReceivedAd(AdView arg0) {
+                Log.i("YoumiAdDemo", "请求广告成功");
+
+            }
+
+            @Override
+            public void onFailedToReceivedAd(AdView arg0) {
+                Log.i("YoumiAdDemo", "请求广告失败");
+            }
+        });
     }
 
     private void getInterlData() {

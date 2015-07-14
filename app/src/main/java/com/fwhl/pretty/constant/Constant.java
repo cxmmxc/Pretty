@@ -28,4 +28,7 @@ public class Constant {
     private static String base_dir = Environment.getExternalStorageDirectory().getPath();
     
     public final static String CaceFileDir = base_dir+"/DCIM/1024MM";
+    
+    public final static String YOUMI_APPID = "c48739ef578bbcff";
+    public final static String YOUMI_APPSECRET = "848fa1b06dd23b16";
 }

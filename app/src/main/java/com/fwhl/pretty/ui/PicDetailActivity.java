@@ -21,6 +21,9 @@ import com.lidroid.xutils.BitmapUtils;
 import com.lidroid.xutils.view.annotation.ContentView;
 import com.lidroid.xutils.view.annotation.ViewInject;
 
+import net.youmi.android.spot.SpotDialogListener;
+import net.youmi.android.spot.SpotManager;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -59,6 +62,60 @@ public class PicDetailActivity extends BaseActivity {
 
     @Override
     protected void initView() {
+        SpotManager.getInstance(this).loadSpotAds();
+        // 插屏出现动画效果，0:ANIM_NONE为无动画，1:ANIM_SIMPLE为简单动画效果，2:ANIM_ADVANCE为高级动画效果
+        SpotManager.getInstance(this).setAnimationType(SpotManager.ANIM_ADVANCE);
+        // 设置插屏动画的横竖屏展示方式，如果设置了横屏，则在有广告资源的情况下会是优先使用横屏图。
+        SpotManager.getInstance(this).setSpotOrientation(
+                SpotManager.ORIENTATION_PORTRAIT);
+        showSpotAds();
+    }
+
+    private void showSpotAds() {
+        // 展示插播广告，可以不调用loadSpot独立使用
+        SpotManager.getInstance(mContext).showSpotAds(
+                mContext, new SpotDialogListener() {
+                    @Override
+                    public void onShowSuccess() {
+                        Log.i("YoumiAdDemo", "展示成功");
+                    }
+
+                    @Override
+                    public void onShowFailed() {
+                        Log.i("YoumiAdDemo", "展示失败");
+                    }
+
+                    @Override
+                    public void onSpotClosed() {
+                        Log.i("YoumiAdDemo", "展示关闭");
+                    }
+
+                }); // //
+
+    }
+
+
+    @Override
+    public void onBackPressed() {
+        // 如果有需要，可以点击后退关闭插播广告。
+        if (!SpotManager.getInstance(this).disMiss()) {
+            // 弹出退出窗口，可以使用自定义退屏弹出和回退动画,参照demo,若不使用动画，传入-1
+            super.onBackPressed();
+        }
+    }
+
+
+    @Override
+    protected void onStop() {
+        // 如果不调用此方法，则按home键的时候会出现图标无法显示的情况。
+        SpotManager.getInstance(this).onStop();
+        super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        SpotManager.getInstance(this).onDestroy();
+        super.onDestroy();
     }
 
     @Override
