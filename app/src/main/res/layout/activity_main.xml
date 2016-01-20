@@ -41,7 +41,7 @@
                 android:layout_width="@dimen/drawer_width"
                 android:layout_height="?attr/listPreferredItemHeight"
                 android:background="@android:color/transparent"
-                android:text="aaa"
+                android:text="@string/suggest_best"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="@android:color/white" />
         </LinearLayout>

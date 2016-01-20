@@ -8,6 +8,8 @@ import com.fwhl.pretty.constant.Constant;
 import com.fwhl.pretty.util.ToastAlone;
 import com.lidroid.xutils.util.LogUtils;
 
+import net.youmi.android.AdManager;
+
 import java.io.File;
 
 /**
@@ -35,8 +37,13 @@ public class PrettyApp extends Application {
         if(!file.exists()) {
             boolean mkdir = file.mkdir();
         }
+        File file_update = new File( Constant.UPDATE_DIR);
+        if(!file_update.exists()) {
+            boolean update = file.mkdir();
+        }
 
         mVersion = getVersionName();
+        AdManager.getInstance(this).setUserDataCollect(true);
     }
 
 

@@ -96,7 +96,6 @@ public class MainFragment extends BaseFragment {
 
     @Override
     protected void initData() {
-
         mlayoutManager = new GridLayoutManager(mContext, 2);
         mAdapter = new RecyeAdapter(mContext);
         mRecyView.setLayoutManager(mlayoutManager);

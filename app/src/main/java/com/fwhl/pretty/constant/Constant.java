@@ -10,7 +10,7 @@ import android.os.Environment;
 public class Constant {
     public final static String SHAREPREFENCE_NAME = "sp_text";
     public final static String JSOUP_URL = "http://www.mnsfz.com/";
-    public final static String JSOUP_SIMEI_URL = "http://www.simei8.com/";
+    public final static String JSOUP_SIMEI_URL = "http://www.henha.com/";
 
     public final static String HOME_FRAGMENT = "home_fragment";
     public final static String CATEGORY_FRAGMENT = "category_fragment";
@@ -28,7 +28,9 @@ public class Constant {
     private static String base_dir = Environment.getExternalStorageDirectory().getPath();
     
     public final static String CaceFileDir = base_dir+"/DCIM/1024MM";
+    public final static String UPDATE_DIR = base_dir+"/1024MM";
     
-    public final static String YOUMI_APPID = "c48739ef578bbcff";
-    public final static String YOUMI_APPSECRET = "848fa1b06dd23b16";
+    public final static String YOUMI_APPID = "0f193c8620155be1";
+    public final static String YOUMI_APPSECRET = "8104d1e7e244857b";
+    public final static String UMENG_APPID = "55a5e99567e58edc7f002e51";
 }

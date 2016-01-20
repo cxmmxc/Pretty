@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.fwhl.pretty" >
 
     <uses-permission android:name="android.permission.INTERNET"/>
@@ -13,13 +14,15 @@
     <uses-permission android:name="android.permission.GET_TASKS" />
     <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.DOWNLOAD_WITHOUT_NOTIFICATION"/>
     
     <application
         android:name=".PrettyApp"
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme"
+        tools:replace="allowBackup">
         <activity
             android:name=".ui.WelcomeActivity"
             android:screenOrientation="portrait"
@@ -33,25 +36,32 @@
         </activity>
         <activity android:name=".ui.MainActivity"
             android:screenOrientation="portrait"
+            android:exported="false"
             />
         <activity android:name=".ui.PicDetailActivity"
             android:screenOrientation="portrait"
+            android:exported="false"
             />
         <activity android:name=".ui.CategoryDetailActivity"
             android:screenOrientation="portrait"
+            android:exported="false"
             />
         <activity android:name=".ui.DetailPagerActivity"
             android:screenOrientation="portrait"
+            android:exported="false"
             />
 
         <!--有米start -->
         <activity
             android:name="net.youmi.android.AdBrowser"
+            android:exported="false"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
             android:theme="@android:style/Theme.Light.NoTitleBar" >
         </activity>
         <service
-            android:name="net.youmi.android.AdService" >
+            android:name="net.youmi.android.AdService" 
+            android:exported="false"
+            >
         </service>
         <receiver
             android:name="net.youmi.android.AdReceiver" >
