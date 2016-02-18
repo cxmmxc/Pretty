@@ -3,6 +3,7 @@ package com.fwhl.pretty.fragment;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -43,6 +44,10 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -151,110 +156,132 @@ public class MainFragment extends BaseFragment {
         });
     }
 
-    private void getInterlData() {
+    class InterTask extends AsyncTask<Integer, Integer, Document> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progress.setVisibility(View.VISIBLE);
+        }
 
-        AsyncTask<Integer, Integer, Document> asyncTask = new AsyncTask() {
+        @Override
+        protected void onPostExecute(Document document) {
+            super.onPostExecute(document);
+            progress.setVisibility(View.GONE);
+            if (document != null) {
+                //解析推荐页面
+                /*File file = new File(Environment.getExternalStorageDirectory() + "/pretty_main.txt");
 
-            /**
-             * Runs on the UI thread before {@link #doInBackground}.
-             *
-             * @see #onPostExecute
-             * @see #doInBackground
-             */
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-                progress.setVisibility(View.VISIBLE);
-            }
-
-            /**
-             * <p>Runs on the UI thread after {@link #doInBackground}. The
-             * specified result is the value returned by {@link #doInBackground}.</p>
-             * <p/>
-             * <p>This method won't be invoked if the task was cancelled.</p>
-             *
-             * @param o The result of the operation computed by {@link #doInBackground}.
-             * @see #onPreExecute
-             * @see #doInBackground
-             * @see #onCancelled(Object)
-             */
-            @Override
-            protected void onPostExecute(Object o) {
-                super.onPostExecute(o);
-                progress.setVisibility(View.GONE);
-                if (o != null) {
-                    //解析推荐页面
-                    Document document = (Document) o;
-                    Element element = document.select("div#slideshow1").first();
-                    Elements elements = element.select("a[href]");
-                    if(elements != null) {
-                        for (Element element2 : elements) {
-                            MainPicBean pic = new MainPicBean();
-                            String old_href = element2.attr("href");
-                            String type = StrUtil.getBeanStrType(old_href);
-                            type = StrUtil.getTypeToStr(type);
-                            pic.setType(type);
-                            String href = Constant.JSOUP_SIMEI_URL + old_href;
-                            String title = element2.attr("title");
-                            Element src_ele = element2.getElementsByAttribute("src").first();
-                            String imgurl = Constant.JSOUP_SIMEI_URL + src_ele.attr("src");
-                            pic.setPicUrl(imgurl);
-                            pic.setHrefUrl(href);
-                            pic.setTitle(title);
-                            mPagerPics.add(pic);
-                        }
-                    }
-                    LogUtils.i(mPagerPics.toString());
-                    initDot(mPagerPics.size());
-                    mMainAdapter.setData(mPagerPics);
-
-                    //解析列表页面
-                    Elements elements_other = document.select("div#tu");
-                    if (elements_other != null) {
-                        for(Element ele_other: elements_other) {
-
-                            Elements children = ele_other.child(0).children();
-                            if(children != null) {
-                                for(Element child1: children) {
-                                    MainPicBean bean = new MainPicBean();
-                                    Element href_1 = child1.select("a[href]").first();
-                                    Element src_1 = href_1.getElementsByAttribute("src").first();
-                                    String old_href = href_1.attr("href");
-                                    String type = StrUtil.getBeanStrType(old_href);
-                                    type = StrUtil.getTypeToStr(type);
-                                    bean.setType(type);
-                                    String href = Constant.JSOUP_SIMEI_URL + old_href;
-                                    String title = href_1.attr("title");
-                                    String img_url = src_1.attr("src");
-                                    bean.setTitle(title);
-                                    bean.setHrefUrl(href);
-                                    bean.setPicUrl(img_url);
-                                    mMainPics.add(bean);
-                                }
-                            }
-                        }
-                        mAdapter.setData(mMainPics);
-                    }
-                }else {
-                    empty_layout.setVisibility(View.VISIBLE);
-                }
-            }
-
-            @Override
-            protected Object doInBackground(Object[] params) {
-                Document document = null;
                 try {
-                    document = Jsoup.connect(
-                            Constant.JSOUP_SIMEI_URL).timeout(8000).get();
+                    if (!file.exists()) {
+                        file.createNewFile();
+                    }
+                    FileWriter writer = new FileWriter(file.getAbsolutePath());
+                    BufferedWriter bufferedWriter = new BufferedWriter(writer);
+                    bufferedWriter.write(document.toString());
+                    bufferedWriter.close();
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
                 } catch (IOException e) {
                     e.printStackTrace();
+                }*/
+
+                Element element = document.select("ul.pics").first();
+                if (element == null) {
+                    return;
                 }
-                return document;
+                Elements children1 = element.children();
+                for (Element child : children1) {
+                    MainPicBean pic = new MainPicBean();
+                    Element href_elem = child.select("a[href]").first();
+                    String href = href_elem.attr("href");
+                    String title = href_elem.attr("title");
+                    Element src_elem = child.select("img[src]").first();
+                    String src = src_elem.attr("src");
+                    String type = StrUtil.getBeanStrType(href);
+                    type = StrUtil.getTypeToStr(type);
+                    LogUtils.v(href + "----" + title + "----" + src+"---"+type);
+                    href = Constant.JSOUP_SIMEI_URL + href;
+                    pic.setType(type);
+                    pic.setPicUrl(src);
+                    pic.setHrefUrl(href);
+                    pic.setTitle(title);
+                    mPagerPics.add(pic);
+                }
+
+                initDot(mPagerPics.size());
+                mMainAdapter.setData(mPagerPics);
+
+                //解析列表页面
+                Elements list_elems = document.select(".IndexList1").select(".font_size_small");
+                for (Element child : list_elems) {
+                    Elements childs = child.children();
+                    for (Element child_c : childs) {
+                        MainPicBean bean = new MainPicBean();
+                        String title = child_c.ownText();
+                        Element href_elem = child_c.select("a[href]").first();
+                        String href = href_elem.attr("href");
+                        Element src_elem = child_c.select("img[src]").first();
+                        String src = src_elem.attr("src");
+                        String type = StrUtil.getBeanStrType(href);
+                        type = StrUtil.getTypeToStr(type);
+                        href = Constant.JSOUP_SIMEI_URL + href;
+                        bean.setType(type);
+                        bean.setTitle(title);
+                        bean.setHrefUrl(href);
+                        bean.setPicUrl(src);
+                        mMainPics.add(bean);
+                    }
+                }
+                mAdapter.setData(mMainPics);
+
+//                Elements elements_other = document.select("div#tu");
+//                if (elements_other != null) {
+//                    for(Element ele_other: elements_other) {
+//
+//                        Elements children = ele_other.child(0).children();
+//                        if(children != null) {
+//                            for(Element child1: children) {
+//                                MainPicBean bean = new MainPicBean();
+//                                Element href_1 = child1.select("a[href]").first();
+//                                Element src_1 = href_1.getElementsByAttribute("src").first();
+//                                String old_href = href_1.attr("href");
+//                                String type = StrUtil.getBeanStrType(old_href);
+//                                type = StrUtil.getTypeToStr(type);
+//                                bean.setType(type);
+//                                String href = Constant.JSOUP_SIMEI_URL + old_href;
+//                                String title = href_1.attr("title");
+//                                String img_url = src_1.attr("src");
+//                                bean.setTitle(title);
+//                                bean.setHrefUrl(href);
+//                                bean.setPicUrl(img_url);
+//                                mMainPics.add(bean);
+//                            }
+//                        }
+//                    }
+//                    mAdapter.setData(mMainPics);
+//                }
+            }else {
+                empty_layout.setVisibility(View.VISIBLE);
             }
+        }
+
+        @Override
+        protected Document doInBackground(Integer[] params) {
+            Document document = null;
+            try {
+                document = Jsoup.connect(
+                        Constant.JSOUP_SIMEI_URL).timeout(9000).get();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return document;
+        }
+    }
 
 
-        };
-        asyncTask.execute();
+    private void getInterlData() {
+
+        new InterTask().execute();
     }
 
 

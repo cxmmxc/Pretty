@@ -53,7 +53,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         toolbar.setTitle(R.string.app_name);
         toolbar.setTitleTextColor(getColor(R.color.action_bar_title_color));
         toolbar.collapseActionView();
-//        setSupportActionBar(toolbar);
+        setSupportActionBar(toolbar);
         if (getSupportActionBar() != null){
             getSupportActionBar().setHomeAsUpIndicator(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
