@@ -58,8 +58,12 @@ public class CategoryDetailActivity extends BaseActivity {
     private int mStart = 1;
 
     private CategoryDetailAdapter mCateAdapter;
-    
+
     private boolean isFirstEnter = true;
+
+    private String mFirstIndexUrl = "index1.html";
+
+    private String mNextIndexUrl = "";
 
     @Override
     protected void initView() {
@@ -70,104 +74,84 @@ public class CategoryDetailActivity extends BaseActivity {
     protected void initData() {
         mCateBean = (CategoryBean) getIntent().getSerializableExtra("bean");
         mStart_Href = mCateBean.getHref_url();
-        LogUtils.v("href="+mStart_Href);
+        LogUtils.v("href=" + mStart_Href);
         toolbar.setTitle(mCateBean.getTitle());
         mCateAdapter = new CategoryDetailAdapter(this);
         mGridView.setAdapter(mCateAdapter);
-        getDetailData();
+        getDetailData(mFirstIndexUrl);
     }
 
+    class DetailTask extends AsyncTask<String, Integer, Document> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progress.setVisibility(View.VISIBLE);
+        }
 
-    private void getDetailData() {
+        @Override
+        protected void onPostExecute(Document document) {
+            super.onPostExecute(document);
+            progress.setVisibility(View.GONE);
+            if (document != null) {
 
-        AsyncTask<Integer, Integer, Document> asyncTask = new AsyncTask() {
-            String url = "";
-
-            /**
-             * Runs on the UI thread before {@link #doInBackground}.
-             *
-             * @see #onPostExecute
-             * @see #doInBackground
-             */
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-                progress.setVisibility(View.VISIBLE);
-                if (mStart == 1) {
-                    url = mStart_Href;
+                //解析一共多少页
+                Element listpage_Elem = document.select("div.list_page").first();
+                Element href_Elem = listpage_Elem.select("a[href]").first();
+                String to_text = href_Elem.ownText();
+                if ("上一页".equals(to_text)) {
+                    mNextIndexUrl = null;
                 } else {
-                    //进行URL分解重组
-                    url = mStart_Href + "index" + mStart + ".html";
+                    mNextIndexUrl = href_Elem.attr("href");
                 }
-            }
-
-            /**
-             * <p>Runs on the UI thread after {@link #doInBackground}. The
-             * specified result is the value returned by {@link #doInBackground}.</p>
-             * <p/>
-             * <p>This method won't be invoked if the task was cancelled.</p>
-             *
-             * @param o The result of the operation computed by {@link #doInBackground}.
-             * @see #onPreExecute
-             * @see #doInBackground
-             * @see #onCancelled(Object)
-             */
-            @Override
-            protected void onPostExecute(Object o) {
-                super.onPostExecute(o);
-                progress.setVisibility(View.GONE);
-                if (o != null) {
-                    Document document = (Document) o;
-                    if (mStart == 1) {
-                        //解析一共多少页
-                        Element element = document.select("div.page").first();
-                        Element element2 = element.child(0);
-                        Element element3 = element2.child(element2.childNodeSize() - 2);
-                        String str_more = element3.text();
-                        if (str_more.contains("...")) {
-                            mPageSize = Integer.parseInt(str_more.substring(3, str_more.length()));
-                        } else {
-                            mPageSize = Integer.parseInt(str_more);
-                        }
-                        resolveData(document);
-                    } else {
-                        resolveData(document);
-                    }
-                } else {
-                    if(isFirstEnter) {
-                        empty_layout.setVisibility(View.VISIBLE);
-                    }
-                    pull_refresh_grid.onRefreshComplete();
+                resolveData(document);
+            } else {
+                if (isFirstEnter) {
+                    empty_layout.setVisibility(View.VISIBLE);
                 }
-                isFirstEnter = false;
+                pull_refresh_grid.onRefreshComplete();
             }
+            isFirstEnter = false;
+        }
 
-            @Override
-            protected Object doInBackground(Object[] params) {
-                Document document = null;
-                try {
-                    document = Jsoup.connect(
-                            url).timeout(8000).get();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                return document;
+        @Override
+        protected Document doInBackground(String[] params) {
+            Document document = null;
+            String url = mStart_Href + params[0];
+            try {
+                document = Jsoup.connect(
+                        url).timeout(9000).get();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-
-
-        };
-        asyncTask.execute();
+            return document;
+        }
     }
 
-    private String mHref_Base_Url = "http://www.simei8.com";
+    private void getDetailData(String url) {
+
+        new DetailTask().execute(url);
+    }
+
 
     private void resolveData(Document document) {
         ArrayList<MainPicBean> beans = new ArrayList<MainPicBean>();
-        Element element1 = document.select("div#tu").first();
-        Element element2 = element1.child(0);
-        Elements elements = element2.children();
-        int size = elements.size();
-        for (int i = 0; i < size-2; i++) {
+        Element ul_Elem = document.select("div.PictureList").first().child(0);
+        Elements elements = ul_Elem.children();
+        for (Element child : elements) {
+            Element ahref_Elem = child.select("a[href]").first();
+            String href = mStart_Href + ahref_Elem.attr("href");
+            Element img_Elem = child.select("img[src]").first();
+            String src_url = img_Elem.attr("src");
+            String title = img_Elem.attr("alt");
+            MainPicBean bean = new MainPicBean();
+            bean.setTitle(title);
+            bean.setPicUrl(src_url);
+            bean.setType(mCateBean.getTitle());
+            bean.setHrefUrl(href);
+            beans.add(bean);
+        }
+        /*int size = elements.size();
+        for (int i = 0; i < size - 2; i++) {
             MainPicBean bean = new MainPicBean();
             Element element3 = elements.get(i).child(0);
             String href = element3.attr("href");
@@ -176,9 +160,9 @@ public class CategoryDetailActivity extends BaseActivity {
             bean.setTitle(title);
             bean.setPicUrl(src_img);
             bean.setType(mCateBean.getTitle());
-            bean.setHrefUrl(mHref_Base_Url + href);
+            bean.setHrefUrl("" + href);
             beans.add(bean);
-        }
+        }*/
         pull_refresh_grid.onRefreshComplete();
         if (mStart == 1) {
             mCateAdapter.setData(beans);
@@ -187,8 +171,8 @@ public class CategoryDetailActivity extends BaseActivity {
         }
 
     }
-    
-    Handler mHandler = new Handler(){
+
+    Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
@@ -204,17 +188,18 @@ public class CategoryDetailActivity extends BaseActivity {
             public void onPullDownToRefresh(PullToRefreshBase<GridView> pullToRefreshBase) {
                 //下拉刷新
                 mStart = 1;
-                getDetailData();
+                getDetailData(mFirstIndexUrl);
             }
 
             @Override
             public void onPullUpToRefresh(PullToRefreshBase<GridView> pullToRefreshBase) {
                 //上啦加载
-                if (mStart >= mPageSize) {
-                    mHandler.sendEmptyMessageDelayed(1, 1000);
+
+                if (mNextIndexUrl == null) {
+                    mHandler.sendEmptyMessageDelayed(1, 800);
                 } else {
                     mStart++;
-                    getDetailData();
+                    getDetailData(mNextIndexUrl);
                 }
             }
         });

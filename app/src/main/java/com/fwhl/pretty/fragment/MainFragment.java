@@ -217,7 +217,8 @@ public class MainFragment extends BaseFragment {
                     Elements childs = child.children();
                     for (Element child_c : childs) {
                         MainPicBean bean = new MainPicBean();
-                        String title = child_c.ownText();
+                        Element span_elem = child_c.select("span").first();
+                        String title = span_elem.ownText();
                         Element href_elem = child_c.select("a[href]").first();
                         String href = href_elem.attr("href");
                         Element src_elem = child_c.select("img[src]").first();

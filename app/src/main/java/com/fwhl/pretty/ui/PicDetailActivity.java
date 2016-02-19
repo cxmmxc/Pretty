@@ -28,6 +28,7 @@ import net.youmi.android.spot.SpotManager;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -178,7 +179,29 @@ public class PicDetailActivity extends BaseActivity {
                     e.printStackTrace();
                 }
 
-            Element select = document.select("meta[content]").last();
+            Element page_Elem = document.select("div.article_page").first();
+            String page_str = page_Elem.child(0).child(0).select("a").first().ownText();
+            int total = getPageTotal(page_str);
+
+            Element toElem = document.select("div.ArticleImageBox").first();
+            Element img_Elem = toElem.child(0).select("img[src]").first();
+            String src_url = img_Elem.attr("src");
+            String[] img_bages_strs = src_url.split("-");
+            String img_baseurl = img_bages_strs[0];
+            for (int i = 1; i <= total * 2; i++) {
+                MainPicBean bean = new MainPicBean();
+                bean.setPicUrl(img_baseurl + "-" + i + ".jpg");
+                mMainPics.add(bean);
+            }
+            if (mMainPics.isEmpty()) {
+                empty_layout.setVisibility(View.VISIBLE);
+                return;
+            }
+            Log.e("cxm", mMainPics.toString());
+            pagesize_text.setText(mMainPics.size() + "p");
+            mPicAdapter.setData(mMainPics);
+
+            /*Element select = document.select("meta[content]").last();
             String string = select.attr("content");
             int fir_index = string.indexOf("[");
             int sec_index = string.indexOf("]");
@@ -200,7 +223,7 @@ public class PicDetailActivity extends BaseActivity {
             }
             Log.e("cxm", mMainPics.toString());
             pagesize_text.setText(mMainPics.size() + "p");
-            mPicAdapter.setData(mMainPics);
+            mPicAdapter.setData(mMainPics);*/
         }
 
         @Override
@@ -262,6 +285,14 @@ public class PicDetailActivity extends BaseActivity {
         super.initToolbar(toolbar);
     }
 
+
+    private int getPageTotal(String str) {
+        //共30页：----将30分割出来
+        String[] ye_strs = str.split("页");
+        String gong_strs = ye_strs[0];
+        String count_str = gong_strs.substring(1, gong_strs.length());
+        return Integer.parseInt(count_str);
+    }
 
 
 }
